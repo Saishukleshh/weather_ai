@@ -1,7 +1,7 @@
 import React from 'react';
 import { Bell, ShieldCheck } from 'lucide-react';
 
-const Header = () => {
+const Header = ({ location }) => {
     return (
         <div className="bg-slate-900/50 backdrop-blur-lg border-b border-slate-700/50 p-6 sticky top-0 z-50">
             <div className="max-w-7xl mx-auto flex justify-between items-start">
@@ -14,6 +14,11 @@ const Header = () => {
                             <ShieldCheck size={12} />
                             Verified
                         </span>
+                        {location && (
+                            <span className="px-3 py-1 rounded-full bg-slate-700/50 text-slate-300 text-xs font-medium border border-slate-600/50">
+                                📍 {location.latitude.toFixed(2)}, {location.longitude.toFixed(2)}
+                            </span>
+                        )}
                     </div>
                     <h1 className="text-3xl font-bold text-white tracking-tight">
                         Weather-Based Crop Planning Assistant

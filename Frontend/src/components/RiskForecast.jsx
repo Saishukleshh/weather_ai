@@ -1,16 +1,27 @@
 import React from 'react';
 import { AlertTriangle, ThermometerSun, CloudLightning } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const RiskForecast = () => {
     return (
-        <div className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50 backdrop-blur-sm">
+        <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50 backdrop-blur-sm h-full"
+        >
             <div className="flex items-center gap-2 mb-6">
                 <AlertTriangle className="text-orange-400" size={24} />
                 <h2 className="text-xl font-semibold text-white">Risk Forecast</h2>
             </div>
 
             <div className="space-y-4">
-                <div className="bg-red-900/10 border border-red-500/20 p-4 rounded-xl">
+                <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="bg-red-900/10 border border-red-500/20 p-4 rounded-xl hover:bg-red-900/20 transition-colors cursor-default"
+                >
                     <div className="flex items-start gap-3">
                         <div className="p-2 bg-red-500/10 rounded-lg text-red-400 shrink-0">
                             <ThermometerSun size={20} />
@@ -25,9 +36,14 @@ const RiskForecast = () => {
                             </p>
                         </div>
                     </div>
-                </div>
+                </motion.div>
 
-                <div className="bg-yellow-900/10 border border-yellow-500/20 p-4 rounded-xl">
+                <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="bg-yellow-900/10 border border-yellow-500/20 p-4 rounded-xl hover:bg-yellow-900/20 transition-colors cursor-default"
+                >
                     <div className="flex items-start gap-3">
                         <div className="p-2 bg-yellow-500/10 rounded-lg text-yellow-400 shrink-0">
                             <CloudLightning size={20} />
@@ -42,9 +58,9 @@ const RiskForecast = () => {
                             </p>
                         </div>
                     </div>
-                </div>
+                </motion.div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 
