@@ -23,11 +23,11 @@ const WeatherDashboard = ({ location }) => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50 backdrop-blur-sm h-full"
+            className="bg-stone-200/80 rounded-2xl p-6 border border-stone-300/50 backdrop-blur-sm h-full"
         >
             <div className="flex items-center gap-2 mb-6">
-                <Sun className="text-yellow-400" size={24} />
-                <h2 className="text-xl font-semibold text-white">Live Weather Conditions</h2>
+                <Sun className="text-yellow-500" size={24} />
+                <h2 className="text-xl font-semibold text-stone-900">Live Weather Conditions</h2>
             </div>
 
             <motion.div
@@ -38,43 +38,43 @@ const WeatherDashboard = ({ location }) => {
             >
                 <motion.div
                     variants={item}
-                    whileHover={{ scale: 1.02, backgroundColor: "rgba(30, 41, 59, 0.8)" }}
-                    className="bg-slate-900/50 p-4 rounded-xl border border-slate-700/30 flex items-center gap-4 transition-colors cursor-default"
+                    whileHover={{ scale: 1.02, backgroundColor: "rgba(231, 229, 228, 0.9)" }}
+                    className="bg-stone-300/50 p-4 rounded-xl border border-stone-400/30 flex items-center gap-4 transition-colors cursor-default"
                 >
                     <div className="p-3 bg-blue-500/10 rounded-lg text-blue-400">
                         <Thermometer size={24} />
                     </div>
                     <div>
-                        <p className="text-slate-400 text-sm">Temperature</p>
-                        <p className="text-2xl font-bold text-white">28°C</p>
+                        <p className="text-stone-600 text-sm">Temperature</p>
+                        <p className="text-2xl font-bold text-stone-900">28°C</p>
                     </div>
                 </motion.div>
 
                 <motion.div
                     variants={item}
-                    whileHover={{ scale: 1.02, backgroundColor: "rgba(30, 41, 59, 0.8)" }}
-                    className="bg-slate-900/50 p-4 rounded-xl border border-slate-700/30 flex items-center gap-4 transition-colors cursor-default"
+                    whileHover={{ scale: 1.02, backgroundColor: "rgba(231, 229, 228, 0.9)" }}
+                    className="bg-stone-300/50 p-4 rounded-xl border border-stone-400/30 flex items-center gap-4 transition-colors cursor-default"
                 >
                     <div className="p-3 bg-cyan-500/10 rounded-lg text-cyan-400">
                         <Droplets size={24} />
                     </div>
                     <div>
-                        <p className="text-slate-400 text-sm">Humidity</p>
-                        <p className="text-2xl font-bold text-white">65%</p>
+                        <p className="text-stone-600 text-sm">Humidity</p>
+                        <p className="text-2xl font-bold text-stone-900">65%</p>
                     </div>
                 </motion.div>
 
                 <motion.div
                     variants={item}
-                    whileHover={{ scale: 1.02, backgroundColor: "rgba(30, 41, 59, 0.8)" }}
-                    className="bg-slate-900/50 p-4 rounded-xl border border-slate-700/30 flex items-center gap-4 transition-colors cursor-default"
+                    whileHover={{ scale: 1.02, backgroundColor: "rgba(231, 229, 228, 0.9)" }}
+                    className="bg-stone-300/50 p-4 rounded-xl border border-stone-400/30 flex items-center gap-4 transition-colors cursor-default"
                 >
-                    <div className="p-3 bg-slate-500/10 rounded-lg text-slate-400">
+                    <div className="p-3 bg-stone-500/10 rounded-lg text-stone-600">
                         <Wind size={24} />
                     </div>
                     <div>
-                        <p className="text-slate-400 text-sm">Wind Speed</p>
-                        <p className="text-2xl font-bold text-white">12 km/h</p>
+                        <p className="text-stone-600 text-sm">Wind Speed</p>
+                        <p className="text-2xl font-bold text-stone-900">12 km/h</p>
                     </div>
                 </motion.div>
             </motion.div>

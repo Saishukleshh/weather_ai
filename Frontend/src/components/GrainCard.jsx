@@ -18,10 +18,10 @@ const Graincard = ({ grain }) => {
             style={style}
             {...listeners}
             {...attributes}
-            className="p-4 bg-slate-800 border border-slate-700/50 shadow-lg shadow-black/20 rounded-xl cursor-grab hover:shadow-xl hover:border-emerald-500/30 hover:bg-slate-800/80 transition-all active:cursor-grabbing touch-none group"
+            className="p-4 bg-stone-100 border border-stone-300 shadow-lg shadow-black/10 rounded-xl cursor-grab hover:shadow-xl hover:border-emerald-500/30 hover:bg-stone-50 transition-all active:cursor-grabbing touch-none group"
         >
-            <h3 className="text-lg font-bold text-slate-200 group-hover:text-emerald-400 transition-colors">{grain.name}</h3>
-            <p className="text-sm text-slate-400">{grain.season}</p>
+            <h3 className="text-lg font-bold text-stone-800 group-hover:text-emerald-600 transition-colors">{grain.name}</h3>
+            <p className="text-sm text-stone-500">{grain.season}</p>
         </div>
     );
 };

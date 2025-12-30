@@ -1,66 +1,96 @@
 import React from 'react';
-import { AlertTriangle, ThermometerSun, CloudLightning } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { AlertTriangle, ThermometerSun, CloudLightning, Bell } from 'lucide-react';
 
 const RiskForecast = () => {
+    const risks = [
+        {
+            type: "High",
+            title: "Heatwave Alert",
+            description: "Temperatures expected to cross 40°C next week. Ensure adequate irrigation.",
+            icon: ThermometerSun,
+            bgClass: "bg-red-900/10",
+            borderClass: "border-red-500/20",
+            iconBgClass: "bg-red-500/10",
+            iconColorClass: "text-red-400",
+            titleClass: "text-red-200",
+            badgeClass: "bg-red-500/20 text-red-400 border-red-500/20",
+            descClass: "text-red-300/70"
+        },
+        {
+            type: "Medium",
+            title: "Storm Warning",
+            description: "Scattered thunderstorms predicted for the weekend. Delay spraying pesticides.",
+            icon: CloudLightning,
+            bgClass: "bg-yellow-900/10",
+            borderClass: "border-yellow-500/20",
+            iconBgClass: "bg-yellow-500/10",
+            iconColorClass: "text-yellow-400",
+            titleClass: "text-yellow-200",
+            badgeClass: "bg-yellow-500/20 text-yellow-400 border-yellow-500/20",
+            descClass: "text-yellow-300/70"
+        }
+    ];
+
+    const handleReminder = (risk) => {
+        if (!("Notification" in window)) {
+            alert("This browser does not support desktop notification");
+        } else if (Notification.permission === "granted") {
+            new Notification(`Risk Alert: ${risk.title}`, {
+                body: risk.description,
+                icon: "/vite.svg"
+            });
+        } else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then((permission) => {
+                if (permission === "granted") {
+                    new Notification(`Reminder set for ${risk.title}`);
+                }
+            });
+        }
+    };
+
     return (
-        <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50 backdrop-blur-sm h-full"
-        >
+        <div className="bg-stone-200/80 rounded-2xl p-6 border border-stone-300/50 backdrop-blur-sm h-full">
             <div className="flex items-center gap-2 mb-6">
-                <AlertTriangle className="text-orange-400" size={24} />
-                <h2 className="text-xl font-semibold text-white">Risk Forecast</h2>
+                <AlertTriangle className="text-orange-500" size={24} />
+                <h2 className="text-xl font-semibold text-stone-900">Risk Forecast</h2>
             </div>
 
             <div className="space-y-4">
-                <motion.div
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="bg-red-900/10 border border-red-500/20 p-4 rounded-xl hover:bg-red-900/20 transition-colors cursor-default"
-                >
-                    <div className="flex items-start gap-3">
-                        <div className="p-2 bg-red-500/10 rounded-lg text-red-400 shrink-0">
-                            <ThermometerSun size={20} />
-                        </div>
-                        <div>
-                            <div className="flex items-center justify-between mb-1">
-                                <h3 className="text-red-200 font-medium">Heatwave Alert</h3>
-                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-400 border border-red-500/20">HIGH</span>
+                {risks.map((risk, index) => (
+                    <div
+                        key={index}
+                        className={`${risk.bgClass} border ${risk.borderClass} p-4 rounded-xl transition-colors cursor-default relative group hover:bg-opacity-20`}
+                    >
+                        <div className="flex justify-between items-start gap-3">
+                            <div className="flex items-start gap-3 flex-1">
+                                <div className={`p-2 ${risk.iconBgClass} rounded-lg ${risk.iconColorClass} shrink-0`}>
+                                    <risk.icon size={20} />
+                                </div>
+                                <div className="flex-1">
+                                    <div className="flex items-center flex-wrap gap-2 mb-1 pr-6">
+                                        <h3 className={`${risk.titleClass} font-medium tracking-wide`}>{risk.title}</h3>
+                                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${risk.badgeClass}`}>
+                                            {risk.type.toUpperCase()}
+                                        </span>
+                                    </div>
+                                    <p className={`${risk.descClass} text-sm leading-relaxed`}>
+                                        {risk.description}
+                                    </p>
+                                </div>
                             </div>
-                            <p className="text-red-300/70 text-sm">
-                                Temperatures expected to cross 40°C next week. Ensure adequate irrigation.
-                            </p>
-                        </div>
-                    </div>
-                </motion.div>
 
-                <motion.div
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    className="bg-yellow-900/10 border border-yellow-500/20 p-4 rounded-xl hover:bg-yellow-900/20 transition-colors cursor-default"
-                >
-                    <div className="flex items-start gap-3">
-                        <div className="p-2 bg-yellow-500/10 rounded-lg text-yellow-400 shrink-0">
-                            <CloudLightning size={20} />
-                        </div>
-                        <div>
-                            <div className="flex items-center justify-between mb-1">
-                                <h3 className="text-yellow-200 font-medium">Storm Warning</h3>
-                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-500/20 text-yellow-400 border border-yellow-500/20">MEDIUM</span>
-                            </div>
-                            <p className="text-yellow-300/70 text-sm">
-                                Scattered thunderstorms predicted for the weekend. Delay spraying pesticides.
-                            </p>
+                            <button
+                                onClick={() => handleReminder(risk)}
+                                className="text-stone-500 hover:text-stone-800 transition-colors p-1"
+                                title="Set Alert Reminder"
+                            >
+                                <Bell size={18} />
+                            </button>
                         </div>
                     </div>
-                </motion.div>
+                ))}
             </div>
-        </motion.div>
+        </div>
     );
 };
 

@@ -1,56 +1,101 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const chatbot = require('./chatbot');
+const connectDB = require('./database/db');
+const FarmerSetup = require('./database/models/FarmerSetup');
+
+// Connect to Database
+connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 7777;
 
 app.use(cors());
 app.use(express.json());
+app.get('/api/farmer/setup/:username', async (req, res) => {
+  try {
+    const data = await FarmerSetup.findOne({ username: req.params.username });
+    res.json({ exists: !!data, data });
+  } catch (err) {
+    res.status(500).json({ error: 'Server Error' });
+  }
+});
 
-// Simple in-memory user storage
+app.post('/api/farmer/setup', async (req, res) => {
+  try {
+    const { username, soilType, fieldSize, irrigationType, pastCrops } = req.body;
+
+    // Upsert (update if exists, create if not)
+    const data = await FarmerSetup.findOneAndUpdate(
+      { username },
+      { username, soilType, fieldSize, irrigationType, pastCrops },
+      { new: true, upsert: true }
+    );
+
+    res.json({ success: true, data });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Failed to save data' });
+  }
+});
+
+app.use('/api/chatbot', chatbot);
+
 const users = [
   { id: 1, username: 'farmer1', password: 'password123', email: 'farmer1@farm.com' },
   { id: 2, username: 'admin', password: 'admin123', email: 'admin@farm.com' }
 ];
 
-// Auth endpoints
 app.post('/api/auth/login', (req, res) => {
   const { username, password } = req.body;
   const user = users.find(u => u.username === username && u.password === password);
-  
+
   if (user) {
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       user: { id: user.id, username: user.username, email: user.email },
-      token: 'fake-jwt-token-' + user.id 
+      token: 'fake-jwt-token-' + user.id
     });
   } else {
     res.status(401).json({ success: false, message: 'Invalid credentials' });
   }
 });
 
-app.post('/api/auth/register', (req, res) => {
-  const { username, password, email } = req.body;
-  
+app.post('/api/auth/register', async (req, res) => {
+  const { username, password, email, soilType, fieldSize, irrigationType, pastCrops } = req.body;
+
   if (users.find(u => u.username === username)) {
     return res.status(400).json({ success: false, message: 'Username already exists' });
   }
-  
+
   const newUser = { id: users.length + 1, username, password, email };
   users.push(newUser);
-  
-  res.json({ 
-    success: true, 
+
+  // Auto-save farmer details
+  if (soilType || fieldSize) {
+    try {
+      await FarmerSetup.findOneAndUpdate(
+        { username },
+        { username, soilType, fieldSize, irrigationType, pastCrops: pastCrops || [] },
+        { new: true, upsert: true }
+      );
+    } catch (err) {
+      console.error("Failed to auto-save setup:", err);
+    }
+  }
+
+  res.json({
+    success: true,
     user: { id: newUser.id, username: newUser.username, email: newUser.email },
-    token: 'fake-jwt-token-' + newUser.id 
+    token: 'fake-jwt-token-' + newUser.id
   });
 });
 
-// AgroMonitoring API endpoints
+
 app.get('/api/agro/polygons', async (req, res) => {
   try {
-    const API_KEY = 'your_api_key_here'; // Replace with actual API key
+    const API_KEY = '08071814b3a79d6a9b0de92bd80107ff';
     const response = await axios.get(`http://api.agromonitoring.com/agro/1.0/polygons?appid=${API_KEY}`);
     res.json(response.data);
   } catch (error) {
@@ -58,15 +103,47 @@ app.get('/api/agro/polygons', async (req, res) => {
   }
 });
 
-app.get('/api/agro/weather/:lat/:lon', async (req, res) => {
+// Weather by city name
+app.get('/api/weather/city/:location', async (req, res) => {
   try {
-    const { lat, lon } = req.params;
-    const API_KEY = '08071814b3a79d6a9b0de92bd80107ff';
-
-    const response = await axios.get(`http://api.agromonitoring.com/agro/1.0/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`);
+    const { location } = req.params;
+    const API_KEY = '79544ad5a96d5678372106a037251c9a';
+    const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${API_KEY}&units=metric`);
     res.json(response.data);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch weather data' });
+    console.error('City Weather API Error:', error.message);
+    res.status(500).json({ error: 'Failed to fetch weather data', details: error.message });
+  }
+});
+
+// Weather by coordinates using OpenWeatherMap
+app.get('/api/weather/:lat/:lon', async (req, res) => {
+  try {
+    const { lat, lon } = req.params;
+    const API_KEY = '79544ad5a96d5678372106a037251c9a';
+    const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
+    res.json(response.data);
+  } catch (error) {
+    console.error('Weather API Error:', error.message);
+    res.status(500).json({ error: 'Failed to fetch weather data', details: error.message });
+  }
+});
+
+// Test endpoint to check if API is working
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API is working!', timestamp: new Date() });
+});
+
+// Weather forecast by coordinates
+app.get('/api/weather/forecast/:lat/:lon', async (req, res) => {
+  try {
+    const { lat, lon } = req.params;
+    const API_KEY = '79544ad5a96d5678372106a037251c9a';
+    const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
+    res.json(response.data);
+  } catch (error) {
+    console.error('Forecast API Error:', error.message);
+    res.status(500).json({ error: 'Failed to fetch forecast data', details: error.message });
   }
 });
 
@@ -139,26 +216,8 @@ app.get('/api/market-prices', async (req, res) => {
   }
 });
 
-// Weather data integration
-app.get('/api/weather/:location', async (req, res) => {
-  try {
-    const { location } = req.params;
-    
-    const weatherData = {
-      location,
-      temperature: '28°C',
-      humidity: '65%',
-      rainfall: '5mm',
-      forecast: '7 days of moderate rain expected',
-      cropAdvice: 'Good conditions for rice cultivation'
-    };
 
-    res.json(weatherData);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch weather data' });
-  }
-});
 
 app.listen(PORT, () => {
-console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

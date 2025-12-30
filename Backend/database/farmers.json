@@ -1,0 +1,32 @@
+[
+  {
+    "username": "test_user_file_db",
+    "soilType": "Clay",
+    "fieldSize": "20",
+    "irrigationType": "Tube Well",
+    "pastCrops": [],
+    "createdAt": "2025-12-29T14:46:52.488Z"
+  },
+  {
+    "username": "farmer1",
+    "soilType": "Clay",
+    "fieldSize": "5",
+    "irrigationType": "Rainfed",
+    "pastCrops": [
+      {
+        "cropName": "rice",
+        "year": "2024",
+        "yield": "5ton"
+      }
+    ],
+    "createdAt": "2025-12-29T14:47:48.369Z"
+  },
+  {
+    "username": "admin2",
+    "soilType": "Loam",
+    "fieldSize": "5",
+    "irrigationType": "Rainfed",
+    "pastCrops": [],
+    "createdAt": "2025-12-30T06:09:20.601Z"
+  }
+]
